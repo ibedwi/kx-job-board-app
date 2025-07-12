@@ -36,13 +36,20 @@ interface JobFormProps {
   onCancel?: () => void;
 }
 
-export function JobForm({ companyId, userId, initialData, onCancel }: JobFormProps) {
+export function JobForm({
+  companyId,
+  userId,
+  initialData,
+  onCancel,
+}: JobFormProps) {
   const [title, setTitle] = useState(initialData?.title || "");
-  const [description, setDescription] = useState(initialData?.description || "");
-  const [location, setLocation] = useState(initialData?.location || "");
-  const [jobType, setJobType] = useState<"FULL_TIME" | "PART_TIME" | "CONTRACT">(
-    initialData?.job_type || "FULL_TIME"
+  const [description, setDescription] = useState(
+    initialData?.description || ""
   );
+  const [location, setLocation] = useState(initialData?.location || "");
+  const [jobType, setJobType] = useState<
+    "FULL_TIME" | "PART_TIME" | "CONTRACT"
+  >(initialData?.job_type || "FULL_TIME");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -86,13 +93,11 @@ export function JobForm({ companyId, userId, initialData, onCancel }: JobFormPro
         if (error) throw error;
       } else {
         // Create new job post
-        const { error } = await supabase
-          .from("job_post")
-          .insert({
-            ...jobData,
-            company_id: companyId,
-            created_by_id: userId,
-          });
+        const { error } = await supabase.from("job_post").insert({
+          ...jobData,
+          company_id: companyId,
+          created_by_id: userId,
+        });
 
         if (error) throw error;
       }
@@ -101,7 +106,7 @@ export function JobForm({ companyId, userId, initialData, onCancel }: JobFormPro
       if (onCancel) {
         onCancel();
       } else {
-        router.push("/jobs");
+        router.push("/admin/jobs");
       }
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
@@ -118,10 +123,9 @@ export function JobForm({ companyId, userId, initialData, onCancel }: JobFormPro
           {isEditing ? "Edit Job Post" : "Create New Job Post"}
         </CardTitle>
         <CardDescription>
-          {isEditing 
-            ? "Update your job posting details" 
-            : "Create a job posting to attract qualified candidates"
-          }
+          {isEditing
+            ? "Update your job posting details"
+            : "Create a job posting to attract qualified candidates"}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -149,7 +153,12 @@ export function JobForm({ companyId, userId, initialData, onCancel }: JobFormPro
             </div>
             <div className="space-y-2">
               <Label htmlFor="jobType">Job Type *</Label>
-              <Select value={jobType} onValueChange={(value: "FULL_TIME" | "PART_TIME" | "CONTRACT") => setJobType(value)}>
+              <Select
+                value={jobType}
+                onValueChange={(
+                  value: "FULL_TIME" | "PART_TIME" | "CONTRACT"
+                ) => setJobType(value)}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select job type" />
                 </SelectTrigger>
@@ -177,16 +186,14 @@ export function JobForm({ companyId, userId, initialData, onCancel }: JobFormPro
               Provide a clear and comprehensive description of the role
             </p>
           </div>
-          
-          {error && (
-            <p className="text-sm text-red-500">{error}</p>
-          )}
-          
+
+          {error && <p className="text-sm text-red-500">{error}</p>}
+
           <div className="flex gap-3">
             {onCancel && (
-              <Button 
-                type="button" 
-                variant="outline" 
+              <Button
+                type="button"
+                variant="outline"
                 className="flex-1"
                 onClick={onCancel}
                 disabled={isLoading}
@@ -195,16 +202,15 @@ export function JobForm({ companyId, userId, initialData, onCancel }: JobFormPro
                 Cancel
               </Button>
             )}
-            <Button 
-              type="submit" 
-              className="flex-1"
-              disabled={isLoading}
-            >
+            <Button type="submit" className="flex-1" disabled={isLoading}>
               <Save className="h-4 w-4 mr-2" />
-              {isLoading 
-                ? (isEditing ? "Updating..." : "Creating...") 
-                : (isEditing ? "Update Job" : "Create Job Post")
-              }
+              {isLoading
+                ? isEditing
+                  ? "Updating..."
+                  : "Creating..."
+                : isEditing
+                ? "Update Job"
+                : "Create Job Post"}
             </Button>
           </div>
         </form>

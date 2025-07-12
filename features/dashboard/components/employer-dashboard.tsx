@@ -11,7 +11,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Building, Plus, FileText, Settings, RefreshCw, MapPin, Clock } from "lucide-react";
+import {
+  Building,
+  Plus,
+  FileText,
+  Settings,
+  RefreshCw,
+  MapPin,
+  Clock,
+} from "lucide-react";
 
 interface User {
   id: string;
@@ -71,7 +79,7 @@ export function EmployerDashboard({ user, company }: EmployerDashboardProps) {
   const fetchJobStats = async () => {
     try {
       const supabase = createClient();
-      
+
       const { data, error } = await supabase
         .from("job_post")
         .select("*")
@@ -82,9 +90,9 @@ export function EmployerDashboard({ user, company }: EmployerDashboardProps) {
       if (error) throw error;
 
       const jobs = data || [];
-      const activeJobs = jobs.filter(job => !job.closed_at);
-      const closedJobs = jobs.filter(job => job.closed_at);
-      const recentJobs = jobs.slice(0, 5).map(job => ({
+      const activeJobs = jobs.filter((job) => !job.closed_at);
+      const closedJobs = jobs.filter((job) => job.closed_at);
+      const recentJobs = jobs.slice(0, 5).map((job) => ({
         id: job.id,
         title: job.title,
         location: job.location,
@@ -111,11 +119,11 @@ export function EmployerDashboard({ user, company }: EmployerDashboardProps) {
   }, [company.id]);
 
   const handleCreateJob = () => {
-    router.push("/jobs/new");
+    router.push("/admin/jobs/new");
   };
 
   const handleViewJobs = () => {
-    router.push("/jobs");
+    router.push("/admin/jobs");
   };
   return (
     <div className="py-8 flex flex-col items-stretch gap-8">
@@ -181,7 +189,9 @@ export function EmployerDashboard({ user, company }: EmployerDashboardProps) {
               )}
             </div>
             <p className="text-xs text-muted-foreground">
-              {jobStats.activeJobs === 0 ? "No active job postings" : "Active job postings"}
+              {jobStats.activeJobs === 0
+                ? "No active job postings"
+                : "Active job postings"}
             </p>
           </CardContent>
         </Card>
@@ -216,13 +226,17 @@ export function EmployerDashboard({ user, company }: EmployerDashboardProps) {
           {isLoading ? (
             <div className="text-center py-8">
               <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4 text-muted-foreground" />
-              <p className="text-muted-foreground">Loading recent activity...</p>
+              <p className="text-muted-foreground">
+                Loading recent activity...
+              </p>
             </div>
           ) : jobStats.recentJobs.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <FileText className="h-12 w-12 mx-auto mb-4 opacity-20" />
               <p>No job postings yet</p>
-              <p className="text-sm">Create your first job post to get started</p>
+              <p className="text-sm">
+                Create your first job post to get started
+              </p>
               <Button className="mt-4" onClick={handleCreateJob}>
                 <Plus className="h-4 w-4 mr-2" />
                 Create Job Post
@@ -231,7 +245,10 @@ export function EmployerDashboard({ user, company }: EmployerDashboardProps) {
           ) : (
             <div className="space-y-4">
               {jobStats.recentJobs.map((job) => (
-                <div key={job.id} className="flex items-start justify-between p-4 border rounded-lg">
+                <div
+                  key={job.id}
+                  className="flex items-start justify-between p-4 border rounded-lg"
+                >
                   <div className="flex-1">
                     <p className="text-sm font-medium">{job.title}</p>
                     <div className="flex items-center gap-4 mt-1">
