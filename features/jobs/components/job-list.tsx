@@ -108,7 +108,7 @@ export function JobList({ companyId, userId }: JobListProps) {
                   id: editingJob.id,
                   title: editingJob.title,
                   description: editingJob.description,
-                  location: editingJob.location,
+                  location: editingJob.location || undefined,
                   job_type: editingJob.job_type,
                 }
               : undefined
