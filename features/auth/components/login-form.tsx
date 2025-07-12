@@ -39,7 +39,7 @@ export function LoginForm({
       });
       if (error) throw error;
       // Redirect to protected route which will handle onboarding checks
-      router.push("/protected");
+      router.push("/admin");
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {

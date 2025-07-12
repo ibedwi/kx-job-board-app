@@ -107,7 +107,7 @@ export function OnboardingForm({ initialName, userId }: OnboardingFormProps) {
       if (employerError) throw employerError;
 
       // Redirect to dashboard
-      router.push("/protected");
+      router.push("/admin");
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {

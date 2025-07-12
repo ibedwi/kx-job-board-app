@@ -37,7 +37,7 @@ export function CompanySetupForm({ userId }: CompanySetupFormProps) {
 
     try {
       const supabase = createClient();
-      
+
       // Check if company name already exists (app-level validation)
       const { data: existingCompany } = await supabase
         .from("company")
@@ -76,7 +76,7 @@ export function CompanySetupForm({ userId }: CompanySetupFormProps) {
       if (employerError) throw employerError;
 
       // Redirect to dashboard
-      router.push("/protected");
+      router.push("/admin");
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
@@ -105,11 +105,9 @@ export function CompanySetupForm({ userId }: CompanySetupFormProps) {
               required
             />
           </div>
-          
-          {error && (
-            <p className="text-sm text-red-500">{error}</p>
-          )}
-          
+
+          {error && <p className="text-sm text-red-500">{error}</p>}
+
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? "Creating company..." : "Create Company & Continue"}
           </Button>

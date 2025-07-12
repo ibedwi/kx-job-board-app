@@ -29,7 +29,7 @@ export default async function OnboardingPage() {
 
   // If both profile and company exist, redirect to dashboard
   if (userProfile && companies && companies.length > 0) {
-    redirect("/protected");
+    redirect("/admin");
   }
 
   // Get name from user metadata if available
