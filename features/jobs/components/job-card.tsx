@@ -28,16 +28,17 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { 
-  Calendar, 
-  Edit, 
-  Eye, 
-  EyeOff, 
+import {
+  Calendar,
+  Edit,
+  Eye,
+  EyeOff,
   MapPin,
-  MoreVertical, 
-  Trash2, 
+  MoreVertical,
+  Trash2,
   User,
-  Clock
+  Clock,
+  Link,
 } from "lucide-react";
 
 interface JobPost {
@@ -68,7 +69,9 @@ export function JobCard({ job, onEdit, onRefresh }: JobCardProps) {
   const isClosed = !!job.closed_at && !job.deleted_at;
 
   const truncateDescription = (text: string, maxLength: number = 150) => {
-    return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
+    return text.length > maxLength
+      ? text.substring(0, maxLength) + "..."
+      : text;
   };
 
   const formatDate = (dateString: string) => {
@@ -92,7 +95,7 @@ export function JobCard({ job, onEdit, onRefresh }: JobCardProps) {
     setIsLoading(true);
     try {
       const supabase = createClient();
-      
+
       const { error } = await supabase
         .from("job_post")
         .update({
@@ -113,7 +116,7 @@ export function JobCard({ job, onEdit, onRefresh }: JobCardProps) {
     setIsLoading(true);
     try {
       const supabase = createClient();
-      
+
       const { error } = await supabase
         .from("job_post")
         .update({
@@ -131,33 +134,50 @@ export function JobCard({ job, onEdit, onRefresh }: JobCardProps) {
     }
   };
 
+  const onViewInPublic = () => {
+    window.open(`/jobs/${job.id}`, "_blank");
+  };
+
   return (
     <>
       <Card className={`transition-colors ${!isActive ? "opacity-60" : ""}`}>
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <CardTitle className="text-lg font-semibold mb-2">
+              <CardTitle className="items-center text-lg font-semibold mb-2">
                 {job.title}
+                <Button variant="ghost" size="icon" onClick={onViewInPublic}>
+                  <Eye className="h-4 w-4" />
+                </Button>
               </CardTitle>
-              <div className="flex items-center gap-4 mb-3">
-                <div className="flex items-center gap-2">
-                  <Badge variant={isActive ? "default" : isClosed ? "secondary" : "destructive"}>
-                    {isActive ? "Active" : isClosed ? "Closed" : "Deleted"}
-                  </Badge>
-                </div>
-                {job.location && (
-                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                    <MapPin className="h-3 w-3" />
-                    {job.location}
+
+              <CardDescription className="text-sm flex flex-col gap-2">
+                <div className="flex items-center gap-4 mb-3">
+                  <div className="flex items-center gap-2">
+                    <Badge
+                      variant={
+                        isActive
+                          ? "default"
+                          : isClosed
+                          ? "secondary"
+                          : "destructive"
+                      }
+                    >
+                      {isActive ? "Active" : isClosed ? "Closed" : "Deleted"}
+                    </Badge>
                   </div>
-                )}
-                <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                  <Clock className="h-3 w-3" />
-                  {formatJobType(job.job_type)}
+                  {job.location && (
+                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                      <MapPin className="h-3 w-3" />
+                      {job.location}
+                    </div>
+                  )}
+                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                    <Clock className="h-3 w-3" />
+                    {formatJobType(job.job_type)}
+                  </div>
                 </div>
-              </div>
-              <CardDescription className="text-sm">
+
                 {truncateDescription(job.description)}
               </CardDescription>
             </div>
@@ -172,7 +192,10 @@ export function JobCard({ job, onEdit, onRefresh }: JobCardProps) {
                   <Edit className="h-4 w-4 mr-2" />
                   Edit
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleToggleStatus} disabled={isLoading}>
+                <DropdownMenuItem
+                  onClick={handleToggleStatus}
+                  disabled={isLoading}
+                >
                   {isActive ? (
                     <>
                       <EyeOff className="h-4 w-4 mr-2" />
@@ -186,7 +209,7 @@ export function JobCard({ job, onEdit, onRefresh }: JobCardProps) {
                   )}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   className="text-red-600"
                   onClick={() => setIsDeleteDialogOpen(true)}
                 >
@@ -215,13 +238,16 @@ export function JobCard({ job, onEdit, onRefresh }: JobCardProps) {
         </CardContent>
       </Card>
 
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Job Post</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this job post? This action cannot be undone.
-              The job will be permanently removed from your listings.
+              Are you sure you want to delete this job post? This action cannot
+              be undone. The job will be permanently removed from your listings.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
